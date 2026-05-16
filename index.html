@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>T.B.S</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-tbs">T.B.S</span>
+      <span class="logo-sub" id="logo-sub-text">The Book Store</span>
+    </div>
+    <div class="header-right">
+      <div class="header-ornament">
+        <span class="ornament-line"></span>
+        <span id="header-ornament-text">مكتبة راقية</span>
+        <span class="ornament-line"></span>
+      </div>
+      <button id="lang-toggle" onclick="toggleLang()">
+        <span>EN</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section id="hero">
+  <p class="hero-eyebrow" id="hero-eyebrow">مجموعة مختارة</p>
+  <h1 class="hero-title" id="hero-title">كتب مترجمة <em>بعناية</em></h1>
+  <div class="hero-divider"><span></span><i>❧</i><span></span></div>
+  <p class="hero-desc" id="hero-desc">ملفات PDF · جودة عالية · تنزيل فوري</p>
+  <!-- SEARCH BAR -->
+  <div class="search-wrap">
+    <input type="text" id="search-input" class="search-input" placeholder="ابحث عن كتاب..." oninput="handleSearch(this.value)" autocomplete="off">
+    <span class="search-icon">🔍</span>
+  </div>
+</section>
+
+<nav id="nav">
+  <button class="nav-btn active" onclick="filterCat('all')" id="cat-all">الكل</button>
+</nav>
+
+<main id="books-grid">
+  <div class="loading-state" id="loading-state">
+    <div class="spinner"></div>
+    <p id="loading-text">جارٍ التحميل...</p>
+  </div>
+</main>
+
+<footer id="site-footer">
+  <strong>T.B.S</strong> &nbsp;·&nbsp; <span id="footer-text">جميع الحقوق محفوظة</span>
+  <div class="footer-sub" id="footer-sub">كتب مترجمة · ملفات PDF</div>
+  <button class="refresh-btn" onclick="refreshPage(this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+    </svg>
+    <span id="refresh-btn-text">تحديث الموقع</span>
+  </button>
+</footer>
+
+<!-- CHAT BUBBLE -->
+<button class="chat-bubble" onclick="openChat()" title="تواصل معنا">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+
+<!-- PRODUCT MODAL -->
+<div id="overlay" onclick="closeModal()"></div>
+<div id="product-modal" class="modal" role="dialog">
+  <div class="modal-header">
+    <h2 id="modal-title">اسم الكتاب</h2>
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-cover-wrap" id="modal-cover-wrap">📚</div>
+    <div class="modal-meta">
+      <p class="modal-author" id="modal-author"></p>
+      <p class="modal-price" id="modal-price"></p>
+      <p class="modal-category-tag" id="modal-category"></p>
+    </div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-section-divider" id="modal-divider-text">إتمام الشراء</div>
+    <a id="buy-link" href="#" target="_blank" class="buy-btn-large">
+      <span id="buy-btn-text">اشتري الآن عبر قمرود</span>
+      <span class="buy-arrow">←</span>
+    </a>
+    <p class="modal-hint" id="modal-hint">سيتم توجيهك لصفحة الدفع الآمنة</p>
+    <!-- RATING SECTION -->
+    <div class="modal-section-divider">التقييمات</div>
+    <div id="rating-section"></div>
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div id="chat-modal" class="modal modal-chat" role="dialog">
+  <div class="modal-header">
+    <h2>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-left:6px;color:var(--gold)">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      تواصل معنا
+    </h2>
+    <button class="modal-close-btn" onclick="closeChat()">✕</button>
+  </div>
+  <div class="modal-body chat-body">
+    <!-- Email gate -->
+    <div id="chat-email-area">
+      <p class="chat-email-desc">أدخل بريدك الإلكتروني لبدء المحادثة</p>
+      <input type="email" id="chat-email-input" class="chat-email-field" placeholder="بريدك الإلكتروني" onkeydown="if(event.key==='Enter')startChat()">
+      <button class="btn-primary" onclick="startChat()">ابدأ المحادثة</button>
+    </div>
+    <!-- Chat area -->
+    <div id="chat-messages-area" style="display:none;flex-direction:column;flex:1;min-height:0;">
+      <div id="chat-messages-list" class="chat-messages-list"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" class="chat-input-field" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendChatMessage()">
+        <button class="chat-send-btn" onclick="sendChatMessage()">إرسال</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel" class="modal modal-admin" role="dialog">
+  <div class="modal-header">
+    <h2 id="admin-title">لوحة الإدارة</h2>
+    <button class="modal-close-btn" onclick="closeAdmin()">✕</button>
+  </div>
+  <div class="modal-body">
+    <!-- LOGIN -->
+    <div id="admin-login-section">
+      <div class="field">
+        <label id="label-password">كلمة المرور</label>
+        <input type="password" id="admin-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+      </div>
+      <p id="login-error" style="color:#c0392b;font-size:11px;display:none;margin-bottom:10px;"></p>
+      <div class="modal-btns">
+        <button class="btn-primary" onclick="adminLogin()" id="login-btn">دخول</button>
+      </div>
+    </div>
+    <!-- MAIN -->
+    <div id="admin-main-section" style="display:none">
+      <h3 class="admin-section-title" id="admin-add-title">إضافة كتاب جديد</h3>
+
+      <!-- VISITOR COUNTER -->
+      <div class="admin-stats-card">
+        <div class="admin-stat">
+          <span class="admin-stat-icon">👁</span>
+          <div>
+            <p class="admin-stat-label">إجمالي الزوار</p>
+            <p class="admin-stat-num" id="admin-visitor-count">—</p>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label id="label-title">عنوان الكتاب</label><input type="text" id="e-title" placeholder="اسم الكتاب"></div>
+      <div class="field"><label id="label-author">المؤلف / المترجم</label><input type="text" id="e-author" placeholder="اسم المؤلف"></div>
+      <div class="field"><label id="label-price">السعر</label><input type="number" id="e-price" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="field">
+        <label id="label-currency">العملة</label>
+        <select id="e-currency">
+          <option value="SAR">ريال سعودي (SAR)</option>
+          <option value="AED">درهم إماراتي (AED)</option>
+          <option value="USD">دولار أمريكي (USD)</option>
+          <option value="KWD">دينار كويتي (KWD)</option>
+          <option value="BHD">دينار بحريني (BHD)</option>
+          <option value="QAR">ريال قطري (QAR)</option>
+          <option value="EGP">جنيه مصري (EGP)</option>
+        </select>
+      </div>
+      <div class="field"><label id="label-category">التصنيف</label><input type="text" id="e-cat" placeholder="تطوير الذات · رواية · علوم..."></div>
+      <div class="field"><label id="label-desc">وصف الكتاب</label><textarea id="e-desc" rows="3" placeholder="نبذة عن الكتاب..."></textarea></div>
+      <div class="field">
+        <label id="label-image">رابط صورة الغلاف</label>
+        <input type="url" id="e-image" placeholder="https://...">
+        <div id="img-preview-wrap"><img id="img-preview" src="" alt=""></div>
+      </div>
+      <div class="field">
+        <label id="label-link">رابط الدفع (قمرود)</label>
+        <input type="url" id="e-link" placeholder="https://qomra.io/...">
+        <p class="field-hint" id="hint-link">الصق رابط قمرود — سيُعاد توجيه المشتري مباشرة</p>
+      </div>
+      <div id="admin-error" style="color:#c0392b;font-size:11px;display:none;margin-bottom:10px;"></div>
+      <div class="modal-btns">
+        <button class="btn-primary" onclick="saveBook()" id="save-btn">حفظ الكتاب</button>
+        <button class="btn-secondary" onclick="closeAdmin()" id="cancel-btn">إلغاء</button>
+      </div>
+
+      <!-- PUBLISHED BOOKS -->
+      <div id="books-list">
+        <h3 id="books-list-title">الكتب المنشورة</h3>
+        <div id="admin-books-list"></div>
+      </div>
+
+      <!-- CHAT SECTION -->
+      <div id="admin-chat-section" style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.5rem;">
+        <h3 class="admin-section-title">رسائل العملاء</h3>
+        <!-- Sessions list -->
+        <div id="admin-chat-list-wrap">
+          <div id="admin-chat-list"></div>
+        </div>
+        <!-- Thread view -->
+        <div id="admin-chat-thread" style="display:none;flex-direction:column;gap:8px;">
+          <button class="btn-secondary" style="font-size:10px;padding:8px;" onclick="backToAdminChatList()">← رجوع</button>
+          <div id="admin-chat-messages" class="chat-messages-list admin-chat-messages"></div>
+          <div class="chat-input-row">
+            <input type="text" id="admin-reply-input" class="chat-input-field" placeholder="اكتب ردك..." onkeydown="if(event.key==='Enter')sendAdminReply()">
+            <button class="chat-send-btn" onclick="sendAdminReply()">إرسال</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="logout-btn" onclick="adminLogout()">تسجيل الخروج</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECRET ADMIN TRIGGER -->
+<div id="admin-trigger" onclick="openAdmin()" title="Admin"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
